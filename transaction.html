@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transactions - Village Fund</title>
+    <link rel="stylesheet" href="/src/styles/main.css" />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .type-btn:hover { transform: translateY(-2px); }
+        .type-btn.active { border-color: var(--primary); background-color: #eff6ff; color: var(--primary); }
+    </style>
+  </head>
+  <body class="bg-body">
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">VF</div>
+                <span class="font-bold text-lg">Village Fund</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/index.html" class="nav-item">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
+                </a>
+                <a href="/transaction.html" class="nav-item active">
+                    <i data-lucide="arrow-left-right" class="w-5 h-5"></i> Transactions
+                </a>
+                <a href="/dividend.html" class="nav-item">
+                    <i data-lucide="pie-chart" class="w-5 h-5"></i> Dividend
+                </a>
+                <a href="/profile.html" class="nav-item">
+                    <i data-lucide="user" class="w-5 h-5"></i> My Profile
+                </a>
+                <div id="admin-nav-divider" class="border-t border-gray-200 my-2 hidden"></div>
+                <a href="/admin.html" id="admin-nav-link" class="nav-item hidden">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i> Admin Panel
+                </a>
+            </nav>
+            <div class="mt-auto p-4 border-t border-gray-100">
+                <button id="logout-btn" class="btn-outline-danger gap-2">
+                    <i data-lucide="log-out" class="w-5 h-5"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="mb-8 flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-main">New Transaction</h1>
+                    <p class="text-muted">Deposit or Withdraw funds</p>
+                </div>
+            </header>
+
+            <!-- Admin Search (Hidden for now as requested) -->
+            <div id="admin-search" class="card mb-6 hidden">
+                <div class="mb-4">
+                    <h3 class="font-bold text-lg">Find Member</h3>
+                </div>
+                <!-- Search Form Code preserved but hidden -->
+            </div>
+
+            <!-- Transaction Interface -->
+            <div id="transaction-section" class="max-w-2xl mx-auto hidden">
+                
+                <!-- Member Card -->
+                <div class="card bg-gradient-primary mb-6 border-0 shadow-lg text-white">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-blue-100 text-sm mb-1">Current Balance</p>
+                            <h2 id="member-balance" class="text-3xl font-bold mb-4">฿0.00</h2>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="user" class="w-4 h-4 text-blue-200"></i>
+                                <span id="member-name" class="font-medium">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                             <span id="member-id" class="inline-block bg-white/20 px-3 py-1 rounded-full text-xs backdrop-blur-sm">...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction Form -->
+                <div class="card">
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div id="btn-deposit" class="type-btn flex flex-col items-center justify-center p-6 rounded-xl border-2 border-green-500 bg-green-50 text-green-700 transition-all cursor-pointer">
+                            <i data-lucide="arrow-down-circle" class="w-8 h-8 mb-2"></i>
+                            <span class="font-bold">Deposit</span>
+                        </div>
+                        <div id="btn-withdraw" class="type-btn flex flex-col items-center justify-center p-6 rounded-xl border-2 border-gray-100 bg-gray-50 text-gray-500 transition-all cursor-pointer">
+                            <i data-lucide="arrow-up-circle" class="w-8 h-8 mb-2"></i>
+                             <span class="font-bold">Withdraw</span>
+                        </div>
+                    </div>
+
+                    <form id="trans-form">
+                        <div class="input-group mb-6">
+                            <label class="text-lg">Amount (THB)</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">฿</span>
+                                <input type="number" id="amount" class="input-field pl-10 text-xl font-bold" required placeholder="0.00" min="1" step="0.01" />
+                            </div>
+                        </div>
+
+                        <div id="withdraw-warning" class="hidden p-4 mb-6 bg-yellow-50 text-yellow-800 rounded-lg text-sm flex items-start gap-3">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                            <p>Withdrawals will be reviewed by admin if exceeding daily limits.</p>
+                        </div>
+
+                        <div id="trans-message" class="hidden"></div>
+
+                        <button id="confirm-btn" type="submit" class="btn btn-primary w-full py-4 text-lg shadow-lg shadow-blue-200">
+                            Confirm Deposit
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="text-center py-12">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-primary mb-2"></i>
+                <p class="text-muted">Loading account details...</p>
+            </div>
+
+        </main>
+
+        <!-- Mobile Nav -->
+        <nav class="mobile-nav-bottom md:hidden">
+            <a href="/index.html" class="flex flex-col items-center text-gray-400 p-2">
+                <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+                <span class="text-[10px] mt-1">Home</span>
+            </a>
+            <a href="/transaction.html" class="flex flex-col items-center text-primary p-2">
+                <i data-lucide="arrow-left-right" class="w-6 h-6"></i>
+                <span class="text-[10px] mt-1">Transact</span>
+            </a>
+            <a href="/dividend.html" class="flex flex-col items-center text-gray-400 p-2">
+                <i data-lucide="pie-chart" class="w-6 h-6"></i>
+                <span class="text-[10px] mt-1">Dividend</span>
+            </a>
+            <a href="/profile.html" class="flex flex-col items-center text-gray-400 p-2">
+                <i data-lucide="user" class="w-6 h-6"></i>
+                <span class="text-[10px] mt-1">Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qr-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform transition-all scale-100">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-blue-50 text-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="qr-code" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Transaction Pending</h3>
+                <p class="text-muted text-sm mb-6">Please show this QR Code to an admin to confirm your transaction.</p>
+                
+                <div id="qrcode" class="flex justify-center mb-6 p-4 bg-white border border-gray-100 rounded-lg shadow-sm"></div>
+                
+                <div class="bg-blue-50 p-3 rounded-lg mb-6">
+                    <p class="text-xs text-blue-600 font-medium">TxID: <span id="modal-tx-id">...</span></p>
+                </div>
+
+                <button id="close-modal-btn" class="btn btn-primary w-full">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script type="module" src="/src/js/transaction.js"></script>
+    <script>
+      // Initialize icons
+      window.onload = () => {
+        if (window.lucide) window.lucide.createIcons();
+      }
+    </script>
+  </body>
+</html>

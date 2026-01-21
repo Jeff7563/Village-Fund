@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dividend - Village Fund</title>
+    <link rel="stylesheet" href="/src/styles/main.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">VF</div>
+                <span class="font-bold text-lg">Village Fund</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/index.html" class="nav-item">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
+                </a>
+                <a href="/transaction.html" class="nav-item">
+                    <i data-lucide="arrow-left-right" class="w-5 h-5"></i> Transactions
+                </a>
+                <a href="/dividend.html" class="nav-item active">
+                    <i data-lucide="pie-chart" class="w-5 h-5"></i> Dividend
+                </a>
+                <a href="/profile.html" class="nav-item">
+                    <i data-lucide="user" class="w-5 h-5"></i> My Profile
+                </a>
+                <div id="admin-nav-divider" class="border-t border-gray-200 my-2 hidden"></div>
+                <a href="/admin.html" id="admin-nav-link" class="nav-item hidden">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i> Admin Panel
+                </a>
+            </nav>
+            <div class="mt-auto p-4 border-t border-gray-100">
+                <button id="logout-btn" class="btn-outline-danger gap-2">
+                    <i data-lucide="log-out" class="w-5 h-5"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+
+        <main class="main-content">
+            <h1 class="text-2xl font-bold mb-6">Annual Dividends</h1>
+      
+            <!-- Summary Card -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="card bg-gradient-to-br from-primary to-blue-700 text-white border-none relative overflow-hidden" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white;">
+                    <div style="position:absolute; right:-20px; top:-20px; opacity:0.1;">
+                        <i data-lucide="piggy-bank" style="width:150px; height:150px;"></i>
+                    </div>
+                    
+                    <div class="relative z-10">
+                        <p class="text-blue-100 mb-2">Fund Net Profit (<span id="fund-year">2025</span>)</p>
+                        <h2 id="fund-profit" class="text-4xl font-bold mb-6">Loading...</h2>
+                        
+                        <div class="inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
+                            <span class="text-sm font-medium">Dividend Rate</span>
+                            <div id="fund-rate" class="text-2xl font-bold">...%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card flex items-center justify-center text-center p-8 bg-surface">
+                     <div>
+                         <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                             <i data-lucide="check-circle" class="w-8 h-8"></i>
+                         </div>
+                         <h3 class="font-bold text-lg">You are eligible</h3>
+                         <p class="text-muted">Your saving criteria meets the requirement for 2025 dividend distribution.</p>
+                     </div>
+                </div>
+            </div>
+      
+            <!-- History Table -->
+            <div class="card p-0 overflow-hidden">
+                <div class="p-4 border-b border-border bg-gray-50">
+                    <h3 class="font-bold flex items-center gap-2">
+                        <i data-lucide="history" class="w-5 h-5 text-primary"></i> Payout History
+                    </h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-white border-b border-border text-muted font-medium">
+                            <tr>
+                                <th class="p-4">Fiscal Year</th>
+                                <th class="p-4 text-right">Accumulated Saving</th>
+                                <th class="p-4 text-right">Dividend Paid</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dividend-list" class="divide-y divide-gray-100">
+                            <tr>
+                                <td colspan="3" class="p-8 text-center text-muted">Loading history...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <nav class="mobile-nav-bottom">
+            <a href="/" class="flex flex-col items-center gap-1 text-muted">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <span class="text-[10px]">Home</span>
+            </a>
+            <a href="/transaction.html" class="flex flex-col items-center gap-1 text-muted">
+                <i data-lucide="arrow-left-right" class="w-5 h-5"></i>
+                <span class="text-[10px]">Transact</span>
+            </a>
+            <a href="/dividend.html" class="flex flex-col items-center gap-1 text-primary">
+                <i data-lucide="piggy-bank" class="w-5 h-5"></i>
+                <span class="text-[10px]">Dividend</span>
+            </a>
+            <a href="/profile.html" class="flex flex-col items-center gap-1 text-muted">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                <span class="text-[10px]">Profile</span>
+            </a>
+         </nav>
+    </div>
+    <script type="module" src="/src/js/dividend.js"></script>
+    <script>
+        window.initIcons = () => { if(window.lucide) window.lucide.createIcons(); }
+        window.addEventListener('load', window.initIcons);
+    </script>
+  </body>
+</html>
