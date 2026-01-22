@@ -57,8 +57,14 @@ a { text-decoration: none; color: inherit; }
     to { opacity: 0; transform: translateY(-10px); }
 }
 
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
 .animate-slide-in { animation: slideInLeft 0.5s ease-out forwards; }
+.animate-spin { animation: spin 1s linear infinite; }
 
 /* --- Layout Components --- */
 
@@ -212,6 +218,18 @@ a { text-decoration: none; color: inherit; }
     transform: translateY(-1px);
 }
 
+.btn-outline-primary {
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+    transition: all 0.2s ease;
+}
+.btn-outline-primary:hover {
+    background: var(--bg-blue-50);
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1);
+    transform: translateY(-1px);
+}
+
 
 /* Selection Cards (Deposit/Withdraw) */
 .type-btn {
@@ -302,6 +320,7 @@ a { text-decoration: none; color: inherit; }
     to { opacity: 1; transform: scale(1); }
 }
 .animate-popup { animation: popupScale 0.2s ease-out forwards; }
+.animate-scale-in { animation: popupScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
 .input-icon-overlay {
     position: absolute;
@@ -313,6 +332,11 @@ a { text-decoration: none; color: inherit; }
     align-items: center;
     justify-content: center;
 }
+
+.mx-4 { margin-left: 1rem; margin-right: 1rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.z-\[110\] { z-index: 110; }
+.max-w-lg { max-width: 32rem; }
 
 /* Grid System */
 .grid { display: grid; gap: 1rem; }

@@ -2,6 +2,7 @@ import { auth, db } from './firebase.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { collection, query, where, orderBy, limit, getDocs, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import './auth-guard.js';
+import './modal-system.js';
 import { checkAndShowAdminNav } from './admin-utils.js';
 
 const amountInput = document.getElementById('amount');
@@ -108,18 +109,26 @@ async function handleTransaction(e) {
     const amount = parseFloat(amountInput.value);
 
     if (!amount || amount <= 0) {
-        alert('Please enter a valid amount');
+        showAlert('Please enter a valid amount', 'warning');
         return;
     }
 
     if (currentTransactionType === 'withdraw' && amount > currentBalance) {
-        alert('Insufficient balance');
+        showAlert('Insufficient balance for this withdrawal', 'error');
         return;
     }
 
     if (!currentUser) return;
 
-    if (!confirm(`Confirm ${currentTransactionType} of ${formatCurrency(amount)}?`)) return;
+    showConfirm(
+        `Confirm ${currentTransactionType} of ${formatCurrency(amount)}?`,
+        async () => {
+            await executeTransaction(amount, note);
+        }
+    );
+}
+
+async function executeTransaction(amount, note) {
 
     submitBtn.disabled = true;
     submitBtn.textContent = 'Processing...';
@@ -143,7 +152,7 @@ async function handleTransaction(e) {
 
     } catch (err) {
         console.error("Transaction Error:", err);
-        alert("Transaction failed: " + err.message);
+        showAlert("Transaction failed: " + err.message, 'error');
     } finally {
         submitBtn.disabled = false;
         setType(currentTransactionType); // Reset button text
