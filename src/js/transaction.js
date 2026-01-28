@@ -1,5 +1,5 @@
 import { auth, db } from './firebase.js';
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { collection, query, where, orderBy, limit, getDocs, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import './auth-guard.js';
 import './modal-system.js';
@@ -10,6 +10,7 @@ const submitBtn = document.getElementById('confirm-btn');
 const currentBalanceEl = document.getElementById('member-balance');
 const memberNameEl = document.getElementById('member-name');
 const memberIdEl = document.getElementById('member-id');
+const noteInput = document.getElementById('trans-note');
 
 const depositBtn = document.getElementById('btn-deposit');
 const withdrawBtn = document.getElementById('btn-withdraw');
@@ -59,7 +60,7 @@ function setType(type) {
         withdrawBtn.classList.remove('active', 'border-red-500', 'bg-red-50', 'text-red-700');
         withdrawBtn.classList.add('border-gray-100', 'bg-gray-50', 'text-gray-500');
 
-        submitBtn.textContent = 'Confirm Deposit';
+        submitBtn.textContent = 'ยืนยันการฝากเงิน';
         submitBtn.classList.remove('btn-danger', 'shadow-red-200');
         submitBtn.classList.add('btn-primary', 'shadow-blue-200');
         
@@ -71,7 +72,7 @@ function setType(type) {
         depositBtn.classList.remove('active', 'border-green-500', 'bg-green-50', 'text-green-700');
         depositBtn.classList.add('border-gray-100', 'bg-gray-50', 'text-gray-500');
 
-        submitBtn.textContent = 'Confirm Withdraw';
+        submitBtn.textContent = 'ยืนยันการถอนเงิน';
         submitBtn.classList.remove('btn-primary', 'shadow-blue-200');
         submitBtn.classList.add('btn-danger', 'shadow-red-200');
 
@@ -108,20 +109,29 @@ async function handleTransaction(e) {
     e.preventDefault();
     const amount = parseFloat(amountInput.value);
 
+    // 1. Validate Amount Logic
     if (!amount || amount <= 0) {
-        showAlert('Please enter a valid amount', 'warning');
+        showAlert('กรุณาระบุจำนวนเงินที่ถูกต้อง', 'warning');
+        return;
+    }
+
+    if (amount < 50) {
+        showAlert('ยอดเงินขั้นต่ำในการทำรายการคือ 50 บาท', 'warning');
         return;
     }
 
     if (currentTransactionType === 'withdraw' && amount > currentBalance) {
-        showAlert('Insufficient balance for this withdrawal', 'error');
+        showAlert('ยอดเงินในบัญชีไม่เพียงพอ', 'error');
         return;
     }
 
     if (!currentUser) return;
 
+    const note = noteInput ? noteInput.value : '';
+    const typeLabel = currentTransactionType === 'deposit' ? 'ฝากเงิน' : 'ถอนเงิน';
+
     showConfirm(
-        `Confirm ${currentTransactionType} of ${formatCurrency(amount)}?`,
+        `ยืนยันการ${typeLabel} จำนวน ${formatCurrency(amount)}?`,
         async () => {
             await executeTransaction(amount, note);
         }
@@ -131,7 +141,7 @@ async function handleTransaction(e) {
 async function executeTransaction(amount, note) {
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Processing...';
+    submitBtn.textContent = 'กำลังดำเนินการ...';
 
     try {
         // 1. Create PENDING Transaction
@@ -141,18 +151,19 @@ async function executeTransaction(amount, note) {
             amount: amount,
             transDate: serverTimestamp(),
             status: 'pending', 
-            description: `Request via App`
+            description: note || `ทำรายการผ่านแอปพลิเคชัน`
         });
 
-        // 2. Show QR Code
+        // 2. Show QR Code (Alert is now integrated in the modal HTML)
         showQRModal(txDoc.id);
 
         // Reset Form
         amountInput.value = '';
+        if(noteInput) noteInput.value = '';
 
     } catch (err) {
         console.error("Transaction Error:", err);
-        showAlert("Transaction failed: " + err.message, 'error');
+        showAlert("ทำรายการไม่สำเร็จ: " + err.message, 'error');
     } finally {
         submitBtn.disabled = false;
         setType(currentTransactionType); // Reset button text
@@ -191,4 +202,15 @@ function hideWrapper() {
 
 function formatCurrency(num) {
     return new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(num || 0);
+}
+
+// Logout
+const logoutBtn = document.getElementById('logout-btn');
+if(logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+        try {
+            await signOut(auth);
+            window.location.href = '/login.html';
+        } catch(e) { console.error(e); }
+    });
 }

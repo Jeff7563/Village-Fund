@@ -12,36 +12,36 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">VF</div>
-                <span class="font-bold text-lg">Village Fund</span>
+                <span class="font-bold text-lg">กองทุนหมู่บ้าน</span>
             </div>
             <nav class="sidebar-nav">
                 <a href="/index.html" class="nav-item">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i> ภาพรวม
                 </a>
                 <a href="/transaction.html" class="nav-item">
-                    <i data-lucide="arrow-left-right" class="w-5 h-5"></i> Transactions
+                    <i data-lucide="arrow-left-right" class="w-5 h-5"></i> ธุรกรรม
                 </a>
                 <a href="/dividend.html" class="nav-item">
-                    <i data-lucide="pie-chart" class="w-5 h-5"></i> Dividend
+                    <i data-lucide="pie-chart" class="w-5 h-5"></i> เงินปันผล
                 </a>
                 <a href="/profile.html" class="nav-item active">
-                    <i data-lucide="user" class="w-5 h-5"></i> My Profile
+                    <i data-lucide="user" class="w-5 h-5"></i> โปรไฟล์ของฉัน
                 </a>
                 <div id="admin-nav-divider" class="border-t border-gray-200 my-2 hidden"></div>
                 <a href="/admin.html" id="admin-nav-link" class="nav-item hidden">
-                    <i data-lucide="shield-check" class="w-5 h-5"></i> Admin Panel
+                    <i data-lucide="shield-check" class="w-5 h-5"></i> แผงควบคุมผู้ดูแล
                 </a>
             </nav>
             <div class="mt-auto p-4 border-t border-gray-100">
                 <button id="logout-btn" class="btn-outline-danger gap-2">
-                    <i data-lucide="log-out" class="w-5 h-5"></i> Logout
+                    <i data-lucide="log-out" class="w-5 h-5"></i> ออกจากระบบ
                 </button>
             </div>
         </aside>
 
 
         <main class="main-content">
-            <h1 class="text-2xl font-bold mb-6">Account Settings</h1>
+            <h1 class="text-2xl font-bold mb-6">ตั้งค่าบัญชี</h1>
       
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Sidebar/Info (Optional) -->
@@ -50,22 +50,22 @@
                         <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-muted">
                             <i data-lucide="user" class="w-12 h-12"></i>
                         </div>
-                        <h2 class="text-xl font-bold mb-1">Edit Profile</h2>
-                        <p class="text-muted text-sm">Update your contact information</p>
+                        <h2 class="text-xl font-bold mb-1">แก้ไขโปรไฟล์</h2>
+                        <p class="text-muted text-sm">อัปเดตข้อมูลติดต่อของคุณ</p>
                     </div>
                 </div>
 
                 <!-- Form -->
                 <div class="lg:col-span-2">
                     <div class="card">
-                        <h3 class="font-bold border-b border-border pb-4 mb-4">General Information</h3>
+                        <h3 class="font-bold border-b border-border pb-4 mb-4">ข้อมูลทั่วไป</h3>
                         
                         <div id="profile-message" class="p-3 mb-4 text-sm rounded hidden"></div>
                 
                         <form id="profile-form" class="flex flex-col gap-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="input-group">
-                                    <label>Full Name</label>
+                                    <label>ชื่อ-นามสกุล</label>
                                     <div class="relative">
                                         <div class="input-icon-overlay text-muted">
                                             <i data-lucide="user" class="w-5 h-5"></i>
@@ -75,7 +75,7 @@
                                 </div>
                     
                                 <div class="input-group">
-                                    <label>Phone Number</label>
+                                    <label>เบอร์โทรศัพท์</label>
                                     <div class="relative">
                                         <div class="input-icon-overlay text-muted">
                                           <i data-lucide="phone" class="w-5 h-5"></i>
@@ -86,7 +86,7 @@
                             </div>
                 
                             <div class="input-group">
-                                <label>Address</label>
+                                <label>ที่อยู่</label>
                                 <div class="relative">
                                     <!-- Address textarea needs icon at top, not center -->
                                     <div class="absolute left-3 top-3 text-muted pointer-events-none">
@@ -100,7 +100,7 @@
                                 <button id="save-btn" type="submit" class="btn btn-primary">
                                     <span class="flex items-center gap-2">
                                         <i data-lucide="save" class="w-4 h-4"></i> 
-                                        Save Changes
+                                        บันทึกการเปลี่ยนแปลง
                                     </span>
                                 </button>
                             </div>
@@ -113,19 +113,19 @@
         <nav class="mobile-nav-bottom">
             <a href="/" class="flex flex-col items-center gap-1 text-muted">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                <span class="text-[10px]">Home</span>
+                <span class="text-[10px]">หน้าหลัก</span>
             </a>
             <a href="/transaction.html" class="flex flex-col items-center gap-1 text-muted">
                 <i data-lucide="arrow-left-right" class="w-5 h-5"></i>
-                <span class="text-[10px]">Transact</span>
+                <span class="text-[10px]">ธุรกรรม</span>
             </a>
             <a href="/dividend.html" class="flex flex-col items-center gap-1 text-muted">
                 <i data-lucide="piggy-bank" class="w-5 h-5"></i>
-                <span class="text-[10px]">Dividend</span>
+                <span class="text-[10px]">ปันผล</span>
             </a>
             <a href="/profile.html" class="flex flex-col items-center gap-1 text-primary">
                 <i data-lucide="user" class="w-5 h-5"></i>
-                <span class="text-[10px]">Profile</span>
+                <span class="text-[10px]">โปรไฟล์</span>
             </a>
          </nav>
     </div>

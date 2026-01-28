@@ -1,5 +1,5 @@
 import { auth, db } from './firebase.js';
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import './auth-guard.js';
 
@@ -32,7 +32,7 @@ async function loadProfile(uid) {
         }
     } catch (e) {
         console.error("Error loading profile:", e);
-        showMsg("Failed to load profile", "error");
+        showMsg("ไม่สามารถโหลดข้อมูลโปรไฟล์ได้", "error");
     }
 }
 
@@ -43,7 +43,7 @@ if (profileForm) {
         if (!currentUid) return;
 
         saveBtn.disabled = true;
-        saveBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Saving...`;
+        saveBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> กำลังบันทึก...`;
         if(window.lucide) window.lucide.createIcons();
 
         try {
@@ -53,16 +53,16 @@ if (profileForm) {
                 Phone: phoneInput.value,
                 Address: addressInput.value
             });
-            showMsg("Profile updated successfully!", "success");
+            showMsg("บันทึกข้อมูลเรียบร้อยแล้ว!", "success");
         } catch (e) {
             console.error("Error updating profile:", e);
-            showMsg("Failed to update profile", "error");
+            showMsg("บันทึกข้อมูลไม่สำเร็จ", "error");
         } finally {
             saveBtn.disabled = false;
             saveBtn.innerHTML = `
                 <span class="flex items-center gap-2">
                     <i data-lucide="save" class="w-4 h-4"></i> 
-                    Save Changes
+                    บันทึกการเปลี่ยนแปลง
                 </span>
             `;
             if(window.lucide) window.lucide.createIcons();
@@ -75,4 +75,15 @@ function showMsg(msg, type) {
     msgDiv.className = `p-3 mb-4 text-sm rounded text-center ${type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`;
     msgDiv.classList.remove('hidden');
     setTimeout(() => msgDiv.classList.add('hidden'), 3000);
+}
+
+// Logout
+const logoutBtn = document.getElementById('logout-btn');
+if(logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+        try {
+            await signOut(auth);
+            window.location.href = '/login.html';
+        } catch(e) { console.error(e); }
+    });
 }

@@ -15,17 +15,17 @@ if (loginForm) {
         errorDiv.classList.add('hidden');
         errorDiv.textContent = '';
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Logging in...';
+        submitBtn.textContent = 'กำลังเข้าสู่ระบบ...';
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
             window.location.href = '/';
         } catch (error) {
             console.error(error);
-            errorDiv.textContent = 'Failed to log in. Please check your credentials.';
+            errorDiv.textContent = 'เข้าสู่ระบบไม่สำเร็จ กรุณาตรวจสอบอีเมลหรือรหัสผ่าน';
             errorDiv.classList.remove('hidden');
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Sign In';
+            submitBtn.textContent = 'เข้าสู่ระบบ';
         }
     });
 }

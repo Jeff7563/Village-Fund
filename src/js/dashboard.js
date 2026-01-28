@@ -53,7 +53,7 @@ function formatCurrency(num) {
 }
 
 function formatDate(timestamp) {
-    if (!timestamp) return 'Just now';
+    if (!timestamp) return 'เมื่อสักครู่';
     return new Date(timestamp.seconds * 1000).toLocaleDateString('th-TH', { 
         year: 'numeric', month: 'short', day: 'numeric',
         hour: '2-digit', minute: '2-digit'
@@ -88,7 +88,7 @@ function initDashboard(user) {
         listContainer.innerHTML = ''; 
 
         if (snapshot.empty) {
-            listContainer.innerHTML = '<div class="text-center p-8 text-muted">No transactions found</div>';
+            listContainer.innerHTML = '<div class="text-center p-8 text-muted">ไม่พบรายการธุรกรรม</div>';
             return;
         }
 
@@ -111,9 +111,9 @@ function initDashboard(user) {
             let statusBadge = '';
             
             if (isPending) {
-                statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-orange-100 text-orange-600 font-medium ml-2">Pending</span>`;
+                statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-orange-100 text-orange-600 font-medium ml-2">รอตรวจสอบ</span>`;
             } else if (t.status === 'rejected') {
-                statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-red-100 text-red-600 font-medium ml-2">Rejected</span>`;
+                statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-red-100 text-red-600 font-medium ml-2">ถูกปฏิเสธ</span>`;
             }
 
             const item = document.createElement('div');
@@ -127,11 +127,11 @@ function initDashboard(user) {
                         <i data-lucide="${isDeposit ? 'arrow-down-left' : 'arrow-up-right'}" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <p class="font-medium text-main capitalize flex items-center">
-                            ${t.type} ${statusBadge}
+                        <p class="font-medium text-main flex items-center">
+                            ${isDeposit ? 'ฝากเงิน' : 'ถอนเงิน'} ${statusBadge}
                         </p>
                         <p class="text-xs text-muted">${formatDate(t.transDate)}</p>
-                         ${isPending ? '<p class="text-[10px] text-orange-500 mt-0.5">Click to view QR</p>' : ''}
+                         ${isPending ? '<p class="text-[10px] text-orange-500 mt-0.5">คลิกเพื่อดู QR Code</p>' : ''}
                     </div>
                 </div>
                 <div class="text-right">
@@ -157,7 +157,7 @@ function initDashboard(user) {
     }, (error) => {
         console.error("Dashboard Error:", error);
         if(listContainer) {
-            listContainer.innerHTML = `<div class="text-center p-4 text-red-500">Error loading data: ${error.message}</div>`;
+            listContainer.innerHTML = `<div class="text-center p-4 text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}</div>`;
         }
     });
 }

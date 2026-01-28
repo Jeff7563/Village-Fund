@@ -20,12 +20,12 @@ if (registerForm) {
         const confirmPassword = document.getElementById('confirmPassword').value;
 
         if (password !== confirmPassword) {
-            showError('Passwords do not match');
+            showError('รหัสผ่านไม่ตรงกัน');
             return;
         }
 
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Creating Account...';
+        submitBtn.textContent = 'กำลังสร้างบัญชี...';
         hideError();
 
         try {
@@ -57,17 +57,17 @@ if (registerForm) {
         } catch (err) {
             console.error("Registration Error:", err);
             sessionStorage.removeItem('is_registering');
-            showError('Registration failed: ' + formatError(err.code));
+            showError('ลงทะเบียนไม่สำเร็จ: ' + formatError(err.code));
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Create Account';
+            submitBtn.textContent = 'ลงทะเบียน';
         }
     });
 }
 
 function formatError(code) {
-    if (code === 'auth/email-already-in-use') return 'Email is already taken.';
-    if (code === 'auth/weak-password') return 'Password is too weak.';
-    return 'Something went wrong. Please try again.';
+    if (code === 'auth/email-already-in-use') return 'อีเมลนี้ถูกใช้งานแล้ว';
+    if (code === 'auth/weak-password') return 'รหัสผ่านง่ายเกินไป (ต้องมี 6 ตัวอักษรขึ้นไป)';
+    return 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง';
 }
 
 function showError(msg) {

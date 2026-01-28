@@ -125,7 +125,7 @@ async function loadOverviewTab() {
 
 
         <!-- Confirm Modal -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 animate-fade-in">
+        <div class="grid grid-cols-1 gap-6 mb-6 animate-fade-in">
             <div class="card">
                 <h3 class="font-bold mb-4 text-gray-800 flex items-center gap-2">
                     <i data-lucide="bar-chart-2" class="w-4 h-4 text-primary"></i>
@@ -133,15 +133,6 @@ async function loadOverviewTab() {
                 </h3>
                 <div class="relative h-64">
                     <canvas id="chart-volume"></canvas>
-                </div>
-            </div>
-            <div class="card">
-                <h3 class="font-bold mb-4 text-gray-800 flex items-center gap-2">
-                    <i data-lucide="pie-chart" class="w-4 h-4 text-primary"></i>
-                    สัดส่วนกองทุน
-                </h3>
-                <div class="relative h-64 flex justify-center">
-                    <canvas id="chart-ratio"></canvas>
                 </div>
             </div>
         </div>
@@ -2264,9 +2255,8 @@ async function executeReject(transactionId, silent = false) {
 async function renderCharts() {
     try {
         const volumeCtx = document.getElementById('chart-volume');
-        const ratioCtx = document.getElementById('chart-ratio');
         
-        if (!volumeCtx || !ratioCtx) return;
+        if (!volumeCtx) return;
 
         // 1. Prepare Data for Volume Chart (Last 6 Months)
         const months = [];
@@ -2282,8 +2272,7 @@ async function renderCharts() {
         }
 
         const transactionsSnapshot = await getDocs(collection(db, "transactions"));
-        let totalDeposits = 0;
-        let totalWithdrawals = 0;
+
 
         transactionsSnapshot.forEach(doc => {
             const data = doc.data();
@@ -2291,9 +2280,7 @@ async function renderCharts() {
                 const date = data.transDate.toDate();
                 const amount = data.amount || 0;
 
-                // For Ratio Chart
-                if (data.type === 'deposit') totalDeposits += amount;
-                else if (data.type === 'withdraw') totalWithdrawals += amount;
+
 
                 // For Volume Chart
                 const monthDiff = (today.getFullYear() - date.getFullYear()) * 12 + (today.getMonth() - date.getMonth());
@@ -2353,32 +2340,7 @@ async function renderCharts() {
             }
         });
 
-        // 3. Render Ratio Chart (Doughnut)
-        new Chart(ratioCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Total Deposits', 'Total Withdrawals'],
-                datasets: [{
-                    data: [totalDeposits, totalWithdrawals],
-                    backgroundColor: [
-                        'rgba(34, 197, 94, 0.8)',
-                        'rgba(239, 68, 68, 0.8)'
-                    ],
-                    borderWidth: 0,
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                },
-                cutout: '70%'
-            }
-        });
+
 
     } catch (error) {
         console.error("Error rendering charts:", error);
