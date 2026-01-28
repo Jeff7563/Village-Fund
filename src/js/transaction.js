@@ -57,8 +57,8 @@ function setType(type) {
         depositBtn.classList.add('active', 'border-green-500', 'bg-green-50', 'text-green-700');
         depositBtn.classList.remove('border-gray-100', 'bg-gray-50', 'text-gray-500');
         
-        withdrawBtn.classList.remove('active', 'border-red-500', 'bg-red-50', 'text-red-700');
-        withdrawBtn.classList.add('border-gray-100', 'bg-gray-50', 'text-gray-500');
+        withdrawBtn.classList.remove('active', 'border-red-500', 'text-red-700');
+        withdrawBtn.classList.add('border-red-100', 'bg-red-50', 'text-red-300');
 
         submitBtn.textContent = 'ยืนยันการฝากเงิน';
         submitBtn.classList.remove('btn-danger', 'shadow-red-200');
@@ -67,7 +67,7 @@ function setType(type) {
         document.getElementById('withdraw-warning').classList.add('hidden');
     } else {
         withdrawBtn.classList.add('active', 'border-red-500', 'bg-red-50', 'text-red-700');
-        withdrawBtn.classList.remove('border-gray-100', 'bg-gray-50', 'text-gray-500');
+        withdrawBtn.classList.remove('border-red-100', 'text-red-300');
 
         depositBtn.classList.remove('active', 'border-green-500', 'bg-green-50', 'text-green-700');
         depositBtn.classList.add('border-gray-100', 'bg-gray-50', 'text-gray-500');

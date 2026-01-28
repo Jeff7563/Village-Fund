@@ -16,8 +16,39 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUid = user.uid;
         loadProfile(user.uid);
+        checkAndShowAdminNav(user);
     }
 });
+
+async function checkAndShowAdminNav(user) {
+    try {
+        // 1. Check Email
+        if (user.email && user.email.toLowerCase().includes('admin')) {
+            showAdminControls();
+            return;
+        }
+        
+        // 2. Check Firestore Role
+        const memberDoc = await getDoc(doc(db, "members", user.uid));
+        if (memberDoc.exists() && memberDoc.data().role === 'admin') {
+            showAdminControls();
+        }
+    } catch (e) {
+        console.error("Error checking admin:", e);
+    }
+}
+
+function showAdminControls() {
+    // Show Sidebar Link
+    const adminLink = document.getElementById('admin-nav-link');
+    const adminDivider = document.getElementById('admin-nav-divider');
+    if (adminLink) adminLink.classList.remove('hidden');
+    if (adminDivider) adminDivider.classList.remove('hidden');
+
+    // Show Profile Page Button
+    const adminBtn = document.getElementById('admin-panel-btn-container');
+    if (adminBtn) adminBtn.classList.remove('hidden');
+}
 
 async function loadProfile(uid) {
     try {
@@ -66,6 +97,19 @@ if (profileForm) {
                 </span>
             `;
             if(window.lucide) window.lucide.createIcons();
+        }
+    });
+}
+
+// Mobile Logout Handler
+const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+if (mobileLogoutBtn) {
+    mobileLogoutBtn.addEventListener('click', async () => {
+        if(confirm('ต้องการออกจากระบบใช่หรือไม่?')) {
+            try {
+                await signOut(auth);
+                window.location.href = '/login.html';
+            } catch(e) { console.error(e); }
         }
     });
 }

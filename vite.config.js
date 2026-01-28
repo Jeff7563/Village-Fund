@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'Village Fund',
-        short_name: 'VillageFund',
-        description: 'Village Fund Management System',
+        name: 'ออมทรัพย์หมู่บ้าน',
+        short_name: 'ออมทรัพย์',
+        description: 'ระบบจัดการออมทรัพย์หมู่บ้าน',
         theme_color: '#ffffff',
         icons: [
           {

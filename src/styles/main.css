@@ -285,6 +285,8 @@ a { text-decoration: none; color: inherit; }
 .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
 .px-4 { padding-left: 1rem; padding-right: 1rem; }
 .pl-10 { padding-left: 2.5rem !important; }
+.pl-12 { padding-left: 3rem !important; }
+.pl-14 { padding-left: 3.5rem !important; }
 .mt-4 { margin-top: 1rem; }
 .mb-4 { margin-bottom: 1rem; }
 .mb-6 { margin-bottom: 1.5rem; }
@@ -392,6 +394,8 @@ a { text-decoration: none; color: inherit; }
     cursor: pointer;
     transition: all 0.2s ease;
     border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .tab-btn:hover {
@@ -414,6 +418,17 @@ a { text-decoration: none; color: inherit; }
 }
 
 .overflow-hidden { overflow: hidden; }
+.overflow-x-auto { overflow-x: auto; }
+.whitespace-nowrap { white-space: nowrap; }
+
+/* Hide Scrollbar */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
 
 /* Responsive Media Queries */
 @media (min-width: 768px) {

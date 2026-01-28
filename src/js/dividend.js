@@ -251,14 +251,12 @@ function renderEligibilityUI(isEligible, criteria) {
 
     // 2. Render Criteria List Items (Glass Cards)
     const renderItem = (c) => {
-        let centerContent = '';
-        
-        // Calendar Visualization
+        // Special Layout for Calendar Item (Regular Deposit) to better fit mobile
         if (c.calendar) {
             const gridHtml = c.calendar.map(m => `
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 3px;">
                     <div style="
-                        width: 26px; height: 26px;
+                        width: 22px; height: 22px; 
                         border-radius: 50%;
                         display: flex; 
                         align-items: center; 
@@ -267,27 +265,59 @@ function renderEligibilityUI(isEligible, criteria) {
                         color: ${m.hasDeposit ? '#15803d' : '#9ca3af'};
                         border: 1px solid ${m.hasDeposit ? '#bbf7d0' : '#e5e7eb'};
                         flex-shrink: 0;
-                        transition: transform 0.2s;
                     ">
                         ${m.hasDeposit 
-                            ? '<i data-lucide="check" style="width: 14px; height: 14px; stroke-width: 3;"></i>' 
-                            : '<div style="width: 6px; height: 6px; background-color: currentColor; border-radius: 50%;"></div>'}
+                            ? '<i data-lucide="check" style="width: 12px; height: 12px; stroke-width: 3;"></i>' 
+                            : '<div style="width: 5px; height: 5px; background-color: currentColor; border-radius: 50%;"></div>'}
                     </div>
                     <span style="font-size: 9px; color: #64748b; font-weight: 600; white-space: nowrap;">${m.name}</span>
                 </div>
             `).join('');
 
-            centerContent = `
-                <div style="flex: 1; display: flex; justify-content: flex-end; padding-right: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-left: 12px;">
-                    <div style="display: flex; gap: 8px; align-items: center; padding: 4px 0;">
+            return `
+                <div style="
+                    background-color: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(4px);
+                    border-left: 5px solid ${c.pass ? '#22c55e' : '#f87171'};
+                    border-radius: 16px;
+                    padding: 16px 20px;
+                    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.1);
+                    display: flex; 
+                    flex-direction: column;
+                    gap: 12px;
+                    margin-bottom: 12px;
+                    transition: transform 0.2s;
+                " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    
+                    <!-- Top Row: Label & Status Badge -->
+                    <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
+                        <div style="display: flex; flex-direction: column;">
+                             <span style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">${c.label}</span>
+                        </div>
+                        
+                        <div style="text-align: right; flex-shrink: 0; margin-left: 12px;">
+                            <span style="display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; background-color: ${c.pass ? '#dcfce7' : '#fee2e2'}; color: ${c.pass ? '#15803d' : '#991b1b'}; white-space: nowrap; border: 1px solid ${c.pass ? '#86efac' : '#fca5a5'};">
+                                ${c.value}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Row: Calendar Grid (Full Width) -->
+                    <div style="
+                        display: flex; 
+                        justify-content: space-between; 
+                        overflow-x: auto; 
+                        -webkit-overflow-scrolling: touch; 
+                        padding-bottom: 4px;
+                        gap: 4px;
+                    ">
                         ${gridHtml}
                     </div>
                 </div>
             `;
-        } else {
-            centerContent = `<div style="flex: 1;"></div>`;
         }
 
+        // Standard Layout for other items
         const borderLeftColor = c.pass ? '#22c55e' : '#f87171'; 
         
         return `
@@ -300,27 +330,23 @@ function renderEligibilityUI(isEligible, criteria) {
                 box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.1);
                 display: flex; 
                 align-items: center;
+                justify-content: space-between;
                 min-height: 72px;
-                margin-bottom: 12px; /* Add spacing back for stacked layout */
+                margin-bottom: 12px;
                 transition: transform 0.2s;
             " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
                  
                  <!-- Icon & Title -->
-                 <div style="display: flex; align-items: center; gap: 16px; min-width: 160px;">
+                 <div style="display: flex; align-items: center; gap: 16px;">
                     <div style="display: flex; flex-direction: column;">
                         <span style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">${c.label}</span>
-                        ${!c.calendar ? `<span style="font-size: 12px; color: #64748b; font-weight: 500;">ปัจจุบัน: <span style="color: #334155;">${c.value}</span></span>` : ''}
+                        <span style="font-size: 12px; color: #64748b; font-weight: 500;">ปัจจุบัน: <span style="color: #334155;">${c.value}</span></span>
                     </div>
                  </div>
 
-                 ${centerContent}
-
                  <!-- Right Status Badge -->
                  <div style="text-align: right; flex-shrink: 0; margin-left: 12px;">
-                    ${c.calendar 
-                        ? `<span style="display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; background-color: ${c.pass ? '#dcfce7' : '#fee2e2'}; color: ${c.pass ? '#15803d' : '#991b1b'}; white-space: nowrap; border: 1px solid ${c.pass ? '#86efac' : '#fca5a5'};">${c.value}</span>`
-                        : `<span style="font-size: 14px; font-weight: 800; color: ${c.pass ? '#16a34a' : '#ef4444'}; white-space: nowrap;">${c.value}</span>`
-                    }
+                    <span style="font-size: 14px; font-weight: 800; color: ${c.pass ? '#16a34a' : '#ef4444'}; white-space: nowrap;">${c.pass ? 'ผ่าน' : 'ไม่ผ่าน'}</span>
                  </div>
             </div>
         `;

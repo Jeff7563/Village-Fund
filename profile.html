@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile - Village Fund</title>
     <link rel="stylesheet" href="/src/styles/main.css" />
+    <link rel="manifest" href="/manifest.webmanifest">
     <script src="https://unpkg.com/lucide@latest"></script>
   </head>
   <body>
@@ -12,7 +13,7 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">VF</div>
-                <span class="font-bold text-lg">กองทุนหมู่บ้าน</span>
+                <span class="font-bold text-lg">ออมทรัพย์หมู่บ้าน</span>
             </div>
             <nav class="sidebar-nav">
                 <a href="/index.html" class="nav-item">
@@ -107,6 +108,20 @@
                         </form>
                     </div>
                 </div>
+            </div>
+
+            <!-- Admin Panel Button (Hidden by default, shown via JS) -->
+            <div id="admin-panel-btn-container" class="mt-6 hidden">
+                <a href="/admin.html" class="btn btn-primary w-full shadow-lg">
+                    <i data-lucide="shield-check" class="w-5 h-5 mr-2"></i> ไปยังแผงควบคุมผู้ดูแล (Admin)
+                </a>
+            </div>
+
+            <!-- Mobile Logout Button Section -->
+            <div class="mt-6 md:hidden">
+                <button id="mobile-logout-btn" class="btn btn-danger w-full">
+                    <i data-lucide="log-out" class="w-5 h-5 mr-2"></i> ออกจากระบบ
+                </button>
             </div>
         </main>
 

@@ -119,144 +119,282 @@ function switchTab(tabName) {
 // ============================================
 
 async function loadOverviewTab() {
-    const container = document.getElementById('tab-overview-content');
+    console.log("Loading Overview Tab...");
+    try {
+        const container = document.getElementById('tab-overview-content');
+        if (!container) {
+            console.error("Overview container not found!");
+            return;
+        }
+        
+        container.innerHTML = `
+            <!-- Confirm Modal -->
+            <div class="grid grid-cols-1 gap-6 mb-6 animate-fade-in">
+                <div class="card">
+                    <h3 class="font-bold mb-4 text-gray-800 flex items-center gap-2">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 text-primary"></i>
+                        กิจกรรมธุรกรรม (6 เดือนล่าสุด)
+                    </h3>
+                    <div class="relative h-64">
+                        <canvas id="chart-volume"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="card hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-muted mb-1">สมาชิกทั้งหมด</p>
+                            <h3 id="stat-members" class="text-2xl font-bold text-main">-</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
+                            <i data-lucide="users" class="w-6 h-6 text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-muted mb-1">ยอดเงินออมทรัพย์รวม</p>
+                            <h3 id="stat-total-balance" class="text-2xl font-bold text-green-600">-</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center">
+                            <i data-lucide="wallet" class="w-6 h-6 text-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-muted mb-1">เงินปันผลที่จ่าย (ปีนี้)</p>
+                            <h3 id="stat-dividends" class="text-2xl font-bold text-purple-600">-</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center">
+                            <i data-lucide="trending-up" class="w-6 h-6 text-purple-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-muted mb-1">ธุรกรรมรอตรวจสอบ</p>
+                            <h3 id="stat-pending" class="text-2xl font-bold text-orange-600">-</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center">
+                            <i data-lucide="clock" class="w-6 h-6 text-orange-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="card bg-green-50 border-green-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                            <i data-lucide="arrow-down-left" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-green-700">ยอดฝากเดือนนี้</p>
+                            <p id="stat-month-deposits" class="text-lg font-bold text-green-800">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-red-50 border-red-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+                            <i data-lucide="arrow-up-right" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-red-700">ยอดถอนเดือนนี้</p>
+                            <p id="stat-month-withdrawals" class="text-lg font-bold text-red-800">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-blue-50 border-blue-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                            <i data-lucide="activity" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-700">การเปลี่ยนแปลงสุทธิ</p>
+                            <p id="stat-net-change" class="text-lg font-bold text-blue-800">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-gray-800">ธุรกรรมล่าสุด</h3>
+                    <div class="flex gap-2">
+                         <button onclick="console.log('Reloading...'); loadOverviewTab();" class="text-xs text-muted hover:text-primary">
+                            <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                        </button>
+                        <button onclick="switchTab('pending')" class="text-primary text-sm hover:underline">ดูทั้งหมด</button>
+                    </div>
+                </div>
+                
+                <!-- Desktop Table -->
+                <div class="hidden md:block overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left p-3 text-sm font-medium text-muted">วันที่</th>
+                                <th class="text-left p-3 text-sm font-medium text-muted">สมาชิก</th>
+                                <th class="text-left p-3 text-sm font-medium text-muted">ประเภท</th>
+                                <th class="text-right p-3 text-sm font-medium text-muted">จำนวนเงิน</th>
+                                <th class="text-center p-3 text-sm font-medium text-muted">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-transactions-tbody">
+                             <tr><td colspan="5" class="p-4 text-center text-muted">กำลังโหลด...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile List -->
+                <div id="recent-transactions-mobile" class="md:hidden space-y-4">
+                     <div class="text-center py-4 text-muted">กำลังโหลด...</div>
+                </div>
+            </div>
+        `;
+        
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
+
+        try {
+            await loadStatistics();
+        } catch(statErr) {
+            console.error("Error loading statistics:", statErr);
+        }
+        
+        // Add delay to ensure DOM is ready and Chart.js is loaded
+        setTimeout(() => {
+            if (typeof renderCharts === 'function') renderCharts();
+            if (typeof subscribeToRecentTransactions === 'function' && typeof renderRecentTransactions === 'function') {
+                subscribeToRecentTransactions(renderRecentTransactions);
+            } else {
+                console.error("Missing helper functions for transactions table");
+            }
+        }, 100);
+
+    } catch (e) {
+        console.error("CRITICAL ERROR in loadOverviewTab:", e);
+        const container = document.getElementById('tab-overview-content');
+        if(container) {
+             container.innerHTML = `<div class="p-4 bg-red-50 text-red-600 rounded">Error loading dashboard: ${e.message}</div>`;
+        }
+    }
+}
+
+
+
+
+
+
+// Helper to render recent transactions
+function renderRecentTransactions(transactions) {
+    const tbody = document.getElementById('recent-transactions-tbody');
+    const mobileList = document.getElementById('recent-transactions-mobile');
     
-    container.innerHTML = `
+    if (!tbody || !mobileList) return;
 
+    if (transactions.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-muted">ไม่มีรายการล่าสุด</td></tr>`;
+        mobileList.innerHTML = `<div class="text-center py-4 text-muted">ไม่มีรายการล่าสุด</div>`;
+        return;
+    }
 
-        <!-- Confirm Modal -->
-        <div class="grid grid-cols-1 gap-6 mb-6 animate-fade-in">
-            <div class="card">
-                <h3 class="font-bold mb-4 text-gray-800 flex items-center gap-2">
-                    <i data-lucide="bar-chart-2" class="w-4 h-4 text-primary"></i>
-                    กิจกรรมธุรกรรม (6 เดือนล่าสุด)
-                </h3>
-                <div class="relative h-64">
-                    <canvas id="chart-volume"></canvas>
+    // 1. Desktop Render
+    tbody.innerHTML = transactions.map(tx => {
+        const date = tx.transDate ? new Date(tx.transDate.seconds * 1000).toLocaleDateString('th-TH', {
+            day: 'numeric', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit'
+        }) : '-';
+        
+        const isDeposit = tx.type === 'deposit';
+        const typeClass = isDeposit ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
+        const typeIcon = isDeposit ? 'arrow-down-left' : 'arrow-up-right';
+        const typeThai = isDeposit ? 'ฝาก' : 'ถอน';
+        
+        let statusBadge = '';
+        if (tx.status === 'pending') statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-orange-100 text-orange-600">รอตรวจสอบ</span>`;
+        else if (tx.status === 'approved' || tx.status === 'success') statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-green-100 text-green-600">สำเร็จ</span>`;
+        else if (tx.status === 'rejected') statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-red-100 text-red-600">ปฏิเสธ</span>`;
+
+        return `
+            <tr class="border-b border-gray-50 last:border-0 hover:bg-gray-50">
+                <td class="p-3 text-sm">${date}</td>
+                <td class="p-3 text-sm font-medium">
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-bold">
+                            ${(tx.memberName || '?').charAt(0)}
+                        </div>
+                        <span class="truncate max-w-[100px]">${tx.memberName || 'Unknown'}</span>
+                    </div>
+                </td>
+                <td class="p-3">
+                     <span class="inline-flex items-center gap-1 px-2 py-1 rounded ${typeClass} text-[10px] font-medium">
+                        <i data-lucide="${typeIcon}" class="w-3 h-3"></i> ${typeThai}
+                    </span>
+                </td>
+                <td class="p-3 text-right font-bold text-sm ${isDeposit ? 'text-green-600' : 'text-red-600'}">
+                    ${isDeposit ? '+' : '-'}${formatCurrency(tx.amount)}
+                </td>
+                <td class="p-3 text-center">${statusBadge}</td>
+            </tr>
+        `;
+    }).join('');
+
+    // 2. Mobile Render
+    mobileList.innerHTML = transactions.map(tx => {
+        const date = tx.transDate ? new Date(tx.transDate.seconds * 1000).toLocaleDateString('th-TH', {
+            day: 'numeric', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit'
+        }) : '-';
+        
+        const isDeposit = tx.type === 'deposit';
+        const typeClass = isDeposit ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
+        const typeThai = isDeposit ? 'ฝาก' : 'ถอน';
+
+        let statusBadge = '';
+        if (tx.status === 'pending') statusBadge = `<span class="px-2 py-1 rounded text-xs bg-orange-100 text-orange-600 font-medium">รอตรวจสอบ</span>`;
+        else if (tx.status === 'approved' || tx.status === 'success') statusBadge = `<span class="px-2 py-1 rounded text-xs bg-green-100 text-green-600 font-medium">สำเร็จ</span>`;
+        else if (tx.status === 'rejected') statusBadge = `<span class="px-2 py-1 rounded text-xs bg-red-100 text-red-600 font-medium">ปฏิเสธ</span>`;
+
+        return `
+            <div class="card p-3 border border-gray-100 shadow-sm mb-2">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600">
+                             ${(tx.memberName || '?').charAt(0)}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm text-gray-900">${tx.memberName || 'Unknown'}</h4>
+                            <p class="text-xs text-muted">${date}</p>
+                        </div>
+                    </div>
+                    ${statusBadge}
+                </div>
+                
+                <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-50">
+                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded ${typeClass} text-xs font-medium">
+                        ${typeThai}
+                    </span>
+                    <span class="text-lg font-bold ${isDeposit ? 'text-green-600' : 'text-red-600'}">
+                        ${isDeposit ? '+' : '-'}${formatCurrency(tx.amount)}
+                    </span>
                 </div>
             </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div class="card hover:shadow-lg transition-shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-muted mb-1">สมาชิกทั้งหมด</p>
-                        <h3 id="stat-members" class="text-2xl font-bold text-main">-</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
-                        <i data-lucide="users" class="w-6 h-6 text-primary"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card hover:shadow-lg transition-shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-muted mb-1">ยอดเงินกองทุนรวม</p>
-                        <h3 id="stat-total-balance" class="text-2xl font-bold text-green-600">-</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center">
-                        <i data-lucide="wallet" class="w-6 h-6 text-green-600"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card hover:shadow-lg transition-shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-muted mb-1">เงินปันผลที่จ่าย (ปีนี้)</p>
-                        <h3 id="stat-dividends" class="text-2xl font-bold text-purple-600">-</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center">
-                        <i data-lucide="trending-up" class="w-6 h-6 text-purple-600"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card hover:shadow-lg transition-shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-muted mb-1">ธุรกรรมรอตรวจสอบ</p>
-                        <h3 id="stat-pending" class="text-2xl font-bold text-orange-600">-</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center">
-                        <i data-lucide="clock" class="w-6 h-6 text-orange-600"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div class="card bg-green-50 border-green-200">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                        <i data-lucide="arrow-down-left" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs text-green-700">ยอดฝากเดือนนี้</p>
-                        <p id="stat-month-deposits" class="text-lg font-bold text-green-800">-</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card bg-red-50 border-red-200">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
-                        <i data-lucide="arrow-up-right" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs text-red-700">ยอดถอนเดือนนี้</p>
-                        <p id="stat-month-withdrawals" class="text-lg font-bold text-red-800">-</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card bg-blue-50 border-blue-200">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                        <i data-lucide="activity" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs text-blue-700">การเปลี่ยนแปลงสุทธิ</p>
-                        <p id="stat-net-change" class="text-lg font-bold text-blue-800">-</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card mt-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-gray-800">ธุรกรรมล่าสุด</h3>
-                <button onclick="switchTab('pending')" class="text-primary text-sm hover:underline">ดูทั้งหมด</button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b border-gray-200">
-                            <th class="text-left p-3 text-sm font-medium text-muted">วันที่</th>
-                            <th class="text-left p-3 text-sm font-medium text-muted">สมาชิก</th>
-                            <th class="text-left p-3 text-sm font-medium text-muted">ประเภท</th>
-                            <th class="text-right p-3 text-sm font-medium text-muted">จำนวนเงิน</th>
-                            <th class="text-center p-3 text-sm font-medium text-muted">สถานะ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recent-transactions-tbody">
-                         <tr><td colspan="5" class="p-4 text-center text-muted">กำลังโหลด...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
+        `;
+    }).join('');
     
     if (window.lucide) window.lucide.createIcons();
-    await loadStatistics();
-    
-    // Add delay to ensure DOM is ready and Chart.js is loaded
-    setTimeout(() => {
-        renderCharts();
-        subscribeToRecentTransactions(renderRecentTransactions);
-    }, 100);
 }
 
 async function loadStatistics() {
@@ -389,7 +527,7 @@ function loadPendingTab() {
                 <p class="text-muted">ไม่มีรายการรอตรวจสอบ</p>
             </div>
 
-            <div id="pending-transactions-table" class="hidden overflow-x-auto">
+            <div id="pending-transactions-table" class="hidden md:block overflow-x-auto">
                 <table class="w-full">
                     <thead>
                         <tr class="border-b border-gray-200">
@@ -407,6 +545,11 @@ function loadPendingTab() {
                     <tbody id="pending-transactions-tbody">
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile List View (Cards) -->
+            <div id="pending-mobile-list" class="md:hidden space-y-4 hidden">
+                <!-- Cards injected by JS -->
             </div>
         </div>
     `;
@@ -432,6 +575,7 @@ function loadPendingTransactions() {
     const emptyState = document.getElementById('pending-empty-state');
     const table = document.getElementById('pending-transactions-table');
     const tbody = document.getElementById('pending-transactions-tbody');
+    const mobileList = document.getElementById('pending-mobile-list'); // New Element
 
     // Clean up previous listener if exists
     if (unsubscribePending) {
@@ -450,6 +594,7 @@ function loadPendingTransactions() {
             if (snapshot.empty) {
                 if (loadingState) loadingState.classList.add('hidden');
                 if (table) table.classList.add('hidden');
+                if (mobileList) mobileList.classList.add('hidden');
                 if (emptyState) emptyState.classList.remove('hidden');
                 
                 // Also hide bulk actions
@@ -489,8 +634,8 @@ function loadPendingTransactions() {
             // Update Global State
             pendingTransactions = transactions;
             
-            // Render Table
-            if (tbody) renderPendingTransactions(transactions, tbody);
+            // Render Both Views
+            if (tbody) renderPendingTransactions(transactions, tbody, mobileList);
             
             // Validate Select All Checkbox State
             if (typeof updateBulkActionUI === 'function') updateBulkActionUI();
@@ -499,6 +644,7 @@ function loadPendingTransactions() {
             if (loadingState) loadingState.classList.add('hidden');
             if (emptyState) emptyState.classList.add('hidden');
             if (table) table.classList.remove('hidden');
+            if (mobileList) mobileList.classList.remove('hidden');
             
             updatePendingCount(transactions.length);
             
@@ -507,7 +653,6 @@ function loadPendingTransactions() {
             // Re-attach listeners that might be outside table (like Select All)
             const selectAllCheckbox = document.getElementById('select-all-checkbox');
             if (selectAllCheckbox) {
-                // Remove old listeners by cloning
                 const newCheckbox = selectAllCheckbox.cloneNode(true);
                 selectAllCheckbox.parentNode.replaceChild(newCheckbox, selectAllCheckbox);
                 
@@ -518,10 +663,11 @@ function loadPendingTransactions() {
                         cb.checked = e.target.checked;
                         if (e.target.checked) {
                             selectedTransactions.add(id);
-                            cb.closest('tr').classList.add('bg-blue-50');
+                            cb.closest('tr')?.classList.add('bg-blue-50');
+                            // Handle mobile selection if needed or shared
                         } else {
                             selectedTransactions.delete(id);
-                            cb.closest('tr').classList.remove('bg-blue-50');
+                            cb.closest('tr')?.classList.remove('bg-blue-50');
                         }
                     });
                     if (typeof updateBulkActionUI === 'function') updateBulkActionUI();
@@ -549,9 +695,9 @@ function loadPendingTransactions() {
 
         } catch (error) {
             console.error("Error loading pending transactions:", error);
-            // Force hide loading on error to prevent infinite spinner
             if (loadingState) loadingState.classList.add('hidden');
             if (table) table.classList.add('hidden');
+            if (mobileList) mobileList.classList.add('hidden');
             if (emptyState) {
                 emptyState.innerHTML = `<p class="text-red-500">Error loading data: ${error.message}</p>`;
                 emptyState.classList.remove('hidden');
@@ -560,9 +706,9 @@ function loadPendingTransactions() {
     });
 }
 
-function renderPendingTransactions(transactions, tbody) {
+function renderPendingTransactions(transactions, tbody, mobileList) {
     if (transactions.length === 0) {
-        tbody.innerHTML = `
+        const emptyHTML = `
             <tr>
                 <td colspan="6" class="p-8 text-center">
                     <div class="flex flex-col items-center justify-center">
@@ -575,20 +721,19 @@ function renderPendingTransactions(transactions, tbody) {
                 </td>
             </tr>
         `;
-        // Hide bulk actions if empty
+        if(tbody) tbody.innerHTML = emptyHTML;
+        if(mobileList) mobileList.innerHTML = `<div class="text-center py-8 text-muted">ไม่มีรายการรอตรวจสอบ</div>`;
+        
         toggleBulkActions(false);
         if (window.lucide) window.lucide.createIcons();
         return;
     }
     
-    tbody.innerHTML = '';
+    if(tbody) tbody.innerHTML = '';
+    if(mobileList) mobileList.innerHTML = '';
 
     transactions.forEach(tx => {
-        const row = document.createElement('tr');
         const isSelected = selectedTransactions.has(tx.id);
-        row.className = `border-b border-gray-100 hover:bg-gray-50 transition-colors ${isSelected ? 'bg-blue-50' : ''}`;
-        row.dataset.txId = tx.id;
-        
         const date = tx.transDate ? new Date(tx.transDate.seconds * 1000).toLocaleDateString('th-TH', {
             year: 'numeric', month: 'short', day: 'numeric',
             hour: '2-digit', minute: '2-digit'
@@ -598,70 +743,133 @@ function renderPendingTransactions(transactions, tbody) {
         const typeClass = isDeposit ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
         const typeIcon = isDeposit ? 'arrow-down-left' : 'arrow-up-right';
         const typeThai = isDeposit ? 'ฝาก' : 'ถอน';
-        
-        row.innerHTML = `
-            <td class="p-3 text-center">
-                <input type="checkbox" class="tx-checkbox w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer" 
-                    data-id="${tx.id}" ${isSelected ? 'checked' : ''}>
-            </td>
-            <td class="p-3 text-sm">${date}</td>
-            <td class="p-3 text-sm font-medium">${tx.memberName}</td>
-            <td class="p-3">
-                <span class="inline-flex items-center gap-1 px-2 py-1 rounded ${typeClass} text-xs font-medium">
-                    <i data-lucide="${typeIcon}" class="w-3 h-3"></i>
-                    ${typeThai}
-                </span>
-            </td>
-            <td class="p-3 text-sm font-bold text-right ${isDeposit ? 'text-green-600' : 'text-red-600'}">
-                ${isDeposit ? '+' : '-'}${formatCurrency(tx.amount)}
-            </td>
-            <td class="p-3 text-xs text-muted font-mono">${tx.id.substring(0, 8)}...</td>
-            <td class="p-3">
-                <div class="flex items-center justify-center gap-2">
-                    <button class="approve-btn btn btn-success px-3 py-1 text-sm" data-tx-id="${tx.id}">
-                        <i data-lucide="check" class="w-4 h-4"></i>
+
+        // 1. Render Desktop Row
+        if(tbody) {
+            const row = document.createElement('tr');
+            row.className = `border-b border-gray-100 hover:bg-gray-50 transition-colors ${isSelected ? 'bg-blue-50' : ''}`;
+            row.dataset.txId = tx.id;
+            
+            row.innerHTML = `
+                <td class="p-3 text-center">
+                    <input type="checkbox" class="tx-checkbox w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer" 
+                        data-id="${tx.id}" ${isSelected ? 'checked' : ''}>
+                </td>
+                <td class="p-3 text-sm text-gray-900">${date}</td>
+                <td class="p-3 text-sm font-medium">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600">
+                            ${tx.memberName.charAt(0)}
+                        </div>
+                        ${tx.memberName}
+                    </div>
+                </td>
+                <td class="p-3">
+                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded ${typeClass} text-xs font-medium">
+                        <i data-lucide="${typeIcon}" class="w-3 h-3"></i>
+                        ${typeThai}
+                    </span>
+                </td>
+                <td class="p-3 text-sm font-bold text-right ${isDeposit ? 'text-green-600' : 'text-red-600'}">
+                    ${isDeposit ? '+' : '-'}${formatCurrency(tx.amount)}
+                </td>
+                <td class="p-3 text-xs text-muted font-mono">${tx.id.substring(0, 8)}...</td>
+                <td class="p-3">
+                    <div class="flex items-center justify-center gap-2">
+                        <button class="approve-btn btn btn-success px-3 py-1 text-sm" data-tx-id="${tx.id}">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        </button>
+                        <button class="reject-btn btn btn-danger px-3 py-1 text-sm" data-tx-id="${tx.id}">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        // 2. Render Mobile Card
+        if(mobileList) {
+            const card = document.createElement('div');
+            card.className = `card p-4 border-2 transition-all ${isSelected ? 'bg-blue-50 border-blue-300' : 'border-gray-200'}`;
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+                                 ${tx.memberName.charAt(0)}
+                            </div>
+                            <h4 class="font-bold text-base text-gray-900">${tx.memberName}</h4>
+                        </div>
+                        <p class="text-xs text-gray-500 ml-10">${date}</p>
+                    </div>
+                    <span class="px-3 py-1.5 rounded-lg text-xs font-bold inline-flex items-center gap-1.5 ${typeClass} shadow-sm">
+                        <i data-lucide="${typeIcon}" class="w-3.5 h-3.5"></i>
+                        ${typeThai}
+                    </span>
+                </div>
+                
+                <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 mb-4 border border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-600">จำนวนเงิน</span>
+                        <span class="text-2xl font-bold ${isDeposit ? 'text-green-600' : 'text-red-600'}">
+                            ${isDeposit ? '+' : '-'}${formatCurrency(tx.amount)}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button class="reject-btn btn btn-outline-danger flex justify-center items-center gap-2 py-3 text-sm font-medium" data-tx-id="${tx.id}">
+                        <i data-lucide="x" class="w-4 h-4"></i> ปฏิเสธ
                     </button>
-                    <button class="reject-btn btn btn-danger px-3 py-1 text-sm" data-tx-id="${tx.id}">
-                        <i data-lucide="x" class="w-4 h-4"></i>
+                    <button class="approve-btn btn btn-success flex justify-center items-center gap-2 py-3 text-sm font-medium text-white shadow-md" data-tx-id="${tx.id}">
+                        <i data-lucide="check" class="w-4 h-4"></i> อนุมัติ
                     </button>
                 </div>
-            </td>
-        `;
+            `;
+            mobileList.appendChild(card);
+        }
+    });
+
+    // Attach Listeners for both Desktop and Mobile elements
+    const attachListeners = (container) => {
+        if(!container) return;
         
-        tbody.appendChild(row);
-    });
-    
-    // Attach checkbox listeners
-    tbody.querySelectorAll('.tx-checkbox').forEach(cb => {
-        cb.addEventListener('change', (e) => {
-            const id = e.target.getAttribute('data-id');
-            if (e.target.checked) {
-                selectedTransactions.add(id);
-                e.target.closest('tr').classList.add('bg-blue-50');
-            } else {
-                selectedTransactions.delete(id);
-                e.target.closest('tr').classList.remove('bg-blue-50');
-            }
-            updateBulkActionUI();
+        container.querySelectorAll('.tx-checkbox').forEach(cb => {
+            cb.addEventListener('change', (e) => {
+                const id = e.target.getAttribute('data-id');
+                if (e.target.checked) {
+                    selectedTransactions.add(id);
+                } else {
+                    selectedTransactions.delete(id);
+                }
+                // Re-render to update UI state for both views (simplest way to sync selection state visually)
+                // Note: calling render again inside itself might be recursive loop if not careful. 
+                // Better to just toggle classes manually on both.
+                // For now, simpler: just update UI.
+                updateBulkActionUI();
+            });
         });
-    });
 
-    // Attach Action Listeners
-    tbody.querySelectorAll('.approve-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const txId = e.currentTarget.dataset.txId;
-            const tx = pendingTransactions.find(t => t.id === txId);
-            approveTransaction(tx);
+        container.querySelectorAll('.approve-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const txId = e.currentTarget.dataset.txId;
+                const tx = pendingTransactions.find(t => t.id === txId);
+                approveTransaction(tx); // Ensure this function exists globally or imported
+            });
         });
-    });
 
-    tbody.querySelectorAll('.reject-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const txId = e.currentTarget.dataset.txId;
-            const tx = pendingTransactions.find(t => t.id === txId);
-            rejectTransaction(tx);
+        container.querySelectorAll('.reject-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const txId = e.currentTarget.dataset.txId;
+                const tx = pendingTransactions.find(t => t.id === txId);
+                rejectTransaction(tx); // Ensure this function exists globally
+            });
         });
-    });
+    };
+
+    if(tbody) attachListeners(tbody);
+    if(mobileList) attachListeners(mobileList);
     
     updateBulkActionUI();
 }
@@ -1754,8 +1962,8 @@ async function loadSettingsTab() {
     
     container.innerHTML = `
         <div class="card">
-            <h3 class="text-lg font-bold mb-4">ตั้งค่ากองทุน</h3>
-            <p class="text-muted mb-6">กำหนดค่าพารามิเตอร์กองทุนและการคำนวณเงินปันผล</p>
+            <h3 class="text-lg font-bold mb-4">ตั้งค่าออมทรัพย์</h3>
+            <p class="text-muted mb-6">กำหนดค่าพารามิเตอร์ออมทรัพย์และการคำนวณเงินปันผล</p>
             
             <form id="settings-form" class="space-y-4">
                 <div class="input-group">
@@ -2487,50 +2695,62 @@ function subscribeToRecentTransactions(callback) {
     });
 }
 
-function renderRecentTransactions(transactions) {
-    const tbody = document.getElementById('recent-transactions-tbody');
-    if (!tbody) return;
-    
-    tbody.innerHTML = '';
-    
-    if (transactions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-muted">ไม่มีรายการล่าสุด</td></tr>';
-        return;
+
+// Approve Transaction with Balance Update
+// Approve Transaction with Balance Update
+async function approveTransaction(tx) {
+    if (!confirm('ยืนยันการอนุมัติยอดเงิน ' + formatCurrency(tx.amount) + '?')) return;
+
+    try {
+        await runTransaction(db, async (transaction) => {
+            const memberRef = doc(db, 'members', tx.memberId);
+            const txRef = doc(db, 'transactions', tx.id);
+
+            const memberDoc = await transaction.get(memberRef);
+            const txDoc = await transaction.get(txRef);
+
+            if (!txDoc.exists()) throw 'Transaction does not exist!';
+            if (txDoc.data().status !== 'pending') throw 'Transaction is not pending!';
+
+            const currentBalance = memberDoc.exists() ? (memberDoc.data().Balance || 0) : 0;
+            let newBalance = currentBalance;
+
+            if (tx.type === 'deposit') {
+                newBalance += tx.amount;
+            } else if (tx.type === 'withdraw') {
+                if (currentBalance < tx.amount) throw 'Insufficient funds!';
+                newBalance -= tx.amount;
+            }
+
+            transaction.update(memberRef, { Balance: newBalance });
+            transaction.update(txRef, { 
+                status: 'approved',
+                approvedAt: serverTimestamp(),
+                approvedBy: auth.currentUser.uid
+            });
+        });
+
+        alert('อนุมัติรายการสำเร็จ!');
+    } catch (e) {
+        console.error('Approval Error:', e);
+        alert('เกิดข้อผิดพลาด: ' + e);
     }
+}
 
-    transactions.forEach(tx => {
-        const row = document.createElement('tr');
-        row.className = 'border-b border-gray-100 last:border-0 hover:bg-gray-50';
-        
-        const date = tx.transDate ? new Date(tx.transDate.seconds * 1000).toLocaleDateString('th-TH') : '-';
-        const typeThai = tx.type === 'deposit' ? 'ฝาก' : 'ถอน';
-        const typeClass = tx.type === 'deposit' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
-        
-        // Status mapping
-        let statusBadge = '';
-        if (tx.status === 'pending') {
-            statusBadge = '<span class="px-2 py-1 rounded bg-orange-100 text-orange-600 text-xs font-medium">รอตรวจสอบ</span>';
-        } else if (tx.status === 'approved') {
-            statusBadge = '<span class="px-2 py-1 rounded bg-green-100 text-green-600 text-xs font-medium">อนุมัติ</span>';
-        } else if (tx.status === 'rejected') {
-            statusBadge = '<span class="px-2 py-1 rounded bg-red-100 text-red-600 text-xs font-medium">ปฏิเสธ</span>';
-        } else {
-             statusBadge = `<span class="px-2 py-1 rounded bg-gray-100 text-gray-600 text-xs font-medium">${tx.status}</span>`;
-        }
+// Reject Transaction
+async function rejectTransaction(tx) {
+    if (!confirm('ยืนยันการปฏิเสธรายการนี้?')) return;
 
-        row.innerHTML = `
-            <td class="p-3 text-sm">${date}</td>
-            <td class="p-3 text-sm font-medium">${tx.memberName || '-'}</td>
-            <td class="p-3">
-                <span class="inline-flex items-center gap-1 px-2 py-1 rounded ${typeClass} text-xs font-medium">
-                    ${typeThai}
-                </span>
-            </td>
-            <td class="p-3 text-sm font-bold text-right ${tx.type === 'deposit' ? 'text-green-600' : 'text-red-600'}">
-                ${tx.type === 'deposit' ? '+' : '-'}${formatCurrency(tx.amount)}
-            </td>
-            <td class="p-3 text-center">${statusBadge}</td>
-        `;
-        tbody.appendChild(row);
-    });
+    try {
+        const txRef = doc(db, 'transactions', tx.id);
+        await updateDoc(txRef, {
+            status: 'rejected',
+            rejectedAt: serverTimestamp(),
+            rejectedBy: auth.currentUser.uid
+        });
+        alert('ปฏิเสธรายการเรียบร้อย');
+    } catch (e) {
+        console.error('Rejection Error:', e);
+        alert('เกิดข้อผิดพลาด: ' + e.message);
+    }
 }

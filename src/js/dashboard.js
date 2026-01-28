@@ -114,6 +114,8 @@ function initDashboard(user) {
                 statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-orange-100 text-orange-600 font-medium ml-2">รอตรวจสอบ</span>`;
             } else if (t.status === 'rejected') {
                 statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-red-100 text-red-600 font-medium ml-2">ถูกปฏิเสธ</span>`;
+            } else if (t.status === 'approved' || t.status === 'success') {
+                statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-green-100 text-green-600 font-medium ml-2">อนุมัติแล้ว</span>`;
             }
 
             const item = document.createElement('div');
